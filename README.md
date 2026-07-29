@@ -34,3 +34,4 @@
 ### 2-5. 컨테이너 실행 테스트
 - docker run --rm hello-world 실행
 - "Hello from Docker!" 메시지 정상 출력 → 구축 완료
+<img width="3012" height="1424" alt="image" src="https://github.com/user-attachments/assets/e999efcc-1ca1-4357-90a1-840a086bff8f" />
