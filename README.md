@@ -36,4 +36,11 @@
 - "Hello from Docker!" 메시지 정상 출력 → 구축 완료
 - <img width="1506" height="712" alt="Screenshot 2026-07-29 at 4 48 24 PM" src="https://github.com/user-attachments/assets/13b5981e-f819-40c4-8e15-7de4616d96a8" /><img width="757" height="80" alt="Screenshot 2026-07-29 at 4 59 19 PM" src="https://github.com/user-attachments/assets/83bfd62a-19db-410d-b907-1383b3c7e9f1" />
 
+### 2-6. nginx 컨테이너 실습
+- docker pull nginx 로 이미지 다운로드
+- docker run -d -p 8080:80 --name my-nginx nginx 실행
+- localhost:8080 브라우저 접속 → nginx 기본 페이지 확인
+- 컨테이너 생명주기 실습 (run → stop → start → rm)
+- docker ps / ps -a / logs / images 명령어 숙달
+- 이미지(설계도) vs 컨테이너(실행 인스턴스) 개념 이해
 
