@@ -24,7 +24,9 @@ dev-workstation/
 │   ├── 02-docker-run-port-mapping.png
 │   ├── 03-nginx-default-page.png
 │   ├── 04-docker-logs-lifecycle.png
-│   └── 05-cleanup-and-images.png
+│   ├── 05-cleanup-and-images.png
+│   ├── 06-browser-8082-with-urlbar.png
+│   └── 07-browser-8083-with-urlbar.png
 └── logs/                      # 명령어 + 출력이 함께 기록된 원본 로그
     ├── 01-terminal-basics.log
     ├── 02-permissions.log
@@ -87,7 +89,7 @@ dev-workstation/
 - [x] `hello-world` 실행
 - [x] `ubuntu` 컨테이너 내부 진입 + 종료/유지(attach vs exec) 차이 정리
 - [x] 기존 베이스 이미지 기반 커스텀 이미지 빌드/실행 (Dockerfile 직접 작성)
-- [x] 포트 매핑 접속 검증 (8082 / 8083 — 동일 이미지 2회 실행)
+- [x] 포트 매핑 접속 검증 (8082 / 8083 — 동일 이미지 2회 실행, 주소창 포함 캡처 첨부)
 - [x] 바인드 마운트 반영 — 호스트 변경 전/후 비교
 - [x] 볼륨 영속성 — 컨테이너 삭제 전/후 데이터 유지 증명
 - [x] Git 사용자 정보 · 기본 브랜치 설정 + `git config --list` 기록
@@ -97,9 +99,8 @@ dev-workstation/
 - [x] (보너스) Docker Compose 멀티 컨테이너 + 컨테이너 간 네트워크 통신 확인
 - [x] (보너스) Compose 운영 명령 (`up` / `down` / `ps` / `logs`)
 - [x] (보너스) 환경 변수 주입으로 포트/모드 변경
-- [x] 실습 과정 캡처 이미지 첨부 (5장 — 포트 매핑 / 로그 / 생명주기 / 정리)
+- [x] 실습 과정 캡처 이미지 첨부 (7장 — 포트 매핑 / 로그 / 생명주기 / 정리 / 브라우저 접속 2장)
 - [ ] (보너스) GitHub SSH 키 설정 — 미수행 (현재 HTTPS + osxkeychain 사용)
-- [ ] 브라우저 접속 화면 **주소창 포함** 재캡처 — **보완 예정** (§9 참고)
 - [ ] VSCode GitHub 로그인 화면 캡처 — **첨부 예정** (§12 참고)
 
 ---
@@ -620,12 +621,27 @@ HTTP 200 from port 8083
 
 <img width="753" alt="localhost:8080 브라우저 접속" src="https://github.com/user-attachments/assets/20d31cdf-8900-4b4d-87d9-e713a9547fd9" />
 
-> **보완 예정**: 위 캡처들은 주소창이 함께 잡히지 않았습니다.
-> 커스텀 이미지 `my-web:1.0` 의 `http://localhost:8082` / `http://localhost:8083` 접속 화면을
-> **주소창(포트 포함)이 보이도록** 다시 캡처해 이 위치에 첨부할 예정입니다.
-> 다만 접속 자체는 위 `curl` 출력(HTTP 200), OrbStack 의 Port Forwards 표,
-> 그리고 [§7-3 의 nginx 로그](#실습-캡처--로그-확인-후-stop--ps--ps--a--start)에 남은
-> `host: "localhost:8080"` 기록으로 교차 증명됩니다.
+### 실습 캡처 4 — 커스텀 이미지 접속 (주소창 포함)
+
+커스텀 이미지 `my-web:1.0` 으로 만든 두 컨테이너에 **각각 다른 호스트 포트로 접속**한 화면입니다.
+주소창의 포트 번호와 응답 화면이 함께 보입니다.
+
+**`http://localhost:8082`**
+
+![localhost:8082 접속 - 주소창 포함](docs/screenshots/06-browser-8082-with-urlbar.png)
+
+**`http://localhost:8083`**
+
+![localhost:8083 접속 - 주소창 포함](docs/screenshots/07-browser-8083-with-urlbar.png)
+
+**이 두 장이 증명하는 것**
+
+- 주소창의 `localhost:8082` / `localhost:8083` → **호스트 포트가 서로 다름**
+- 두 페이지의 내용은 **완전히 동일** → 같은 이미지(`my-web:1.0`)에서 나온 컨테이너
+- 즉 **하나의 이미지로 여러 컨테이너를 동시에 띄울 수 있고**, 컨테이너 내부 포트는 둘 다 80인데
+  호스트 포트만 다르게 매핑해 충돌 없이 공존합니다. 포트 매핑이 필요한 이유가 이 두 장에 그대로 담겨 있습니다.
+- 화면에 보이는 "바인드 마운트로 재빌드 없이 반영된 문장입니다"는 [§10](#10-바인드-마운트-반영-호스트-변경-전후-비교)에서
+  호스트 파일을 수정해 추가한 내용이 이미지에 반영된 뒤 서빙되고 있음을 보여줍니다.
 
 ---
 
@@ -1096,5 +1112,7 @@ Git은 인터넷 없이도 동작하고, GitHub는 그 결과를 **다른 사람
 | 포트 매핑 (캡처) | `docker run -d -p 8080:80 --name my-nginx nginx` + `docker ps` | 이미지 자동 pull, PORTS `0.0.0.0:8080->80/tcp` | [캡처](docs/screenshots/02-docker-run-port-mapping.png) |
 | 포트 포워딩 (GUI 교차확인) | OrbStack → Containers → Info | Host 8080 → Container 80, 컨테이너 IP `192.168.215.2` | [캡처](docs/screenshots/01-orbstack-port-forward.png) |
 | 브라우저 접속 (캡처) | `http://localhost:8080` 접속 | nginx 기본 페이지 정상 응답 | [캡처](docs/screenshots/03-nginx-default-page.png) |
+| 포트 매핑 접속 (주소창 포함) | 브라우저로 `http://localhost:8082` 접속 | 주소창 `localhost:8082` + 커스텀 페이지 응답 | [캡처](docs/screenshots/06-browser-8082-with-urlbar.png) |
+| 포트 매핑 접속 2회차 (주소창 포함) | 브라우저로 `http://localhost:8083` 접속 | 주소창 `localhost:8083` + 동일 내용 응답 (같은 이미지, 다른 포트) | [캡처](docs/screenshots/07-browser-8083-with-urlbar.png) |
 | 생명주기 (캡처) | `docker logs` → `stop` → `ps` → `ps -a` → `start` | 정지 후 `ps` 는 비고 `ps -a` 는 `Exited (0)` 로 남음 | [캡처](docs/screenshots/04-docker-logs-lifecycle.png) |
 | 이미지/컨테이너 분리 (캡처) | `docker rm` → `docker ps -a` → `docker images` | 컨테이너는 삭제됐지만 이미지는 그대로 남음 | [캡처](docs/screenshots/05-cleanup-and-images.png) |
