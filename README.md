@@ -51,3 +51,15 @@
 
 
 
+
+### 2-7. .gitignore 설정
+- .gitignore 파일 생성
+- 불필요한 파일(로그, 임시 파일 등) 추적 제외 설정
+- 커밋 및 push 완료
+
+### 2-8. Dockerfile 작성 및 커스텀 이미지 빌드
+- Dockerfile 작성 (베이스 이미지: nginx)
+- docker build -t my-nginx . 로 커스텀 이미지 빌드 성공
+- docker run -d -p 8080:80 my-nginx 로 컨테이너 실행
+- localhost:8080 브라우저 접속 → 커스텀 페이지 확인
+- 이미지 빌드 → 컨테이너 실행 흐름 이해
