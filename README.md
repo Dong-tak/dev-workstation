@@ -44,3 +44,10 @@
 - docker ps / ps -a / logs / images 명령어 숙달
 - 이미지(설계도) vs 컨테이너(실행 인스턴스) 개념 이해
 
+<img width="753" height="812" alt="Screenshot 2026-07-30 at 10 56 16 AM" src="https://github.com/user-attachments/assets/20d31cdf-8900-4b4d-87d9-e713a9547fd9" />
+
+
+
+
+
+
