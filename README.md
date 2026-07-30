@@ -1,3 +1,4 @@
+
 # 개발 워크스테이션 구축
 
 ## 1. 개발 환경
@@ -46,12 +47,6 @@
 
 <img width="753" height="812" alt="Screenshot 2026-07-30 at 10 56 16 AM" src="https://github.com/user-attachments/assets/20d31cdf-8900-4b4d-87d9-e713a9547fd9" />
 
-
-
-
-
-
-
 ### 2-7. .gitignore 설정
 - .gitignore 파일 생성
 - 불필요한 파일(로그, 임시 파일 등) 추적 제외 설정
@@ -63,3 +58,11 @@
 - docker run -d -p 8080:80 my-nginx 로 컨테이너 실행
 - localhost:8080 브라우저 접속 → 커스텀 페이지 확인
 - 이미지 빌드 → 컨테이너 실행 흐름 이해
+
+### 2-9. Docker Compose 작성 및 실행
+- docker-compose.yml 작성 (services: web / build / ports 설정)
+- docker compose up -d 로 컨테이너 백그라운드 실행
+- localhost:8080 브라우저 접속 → 정상 동작 확인
+- docker compose down 으로 컨테이너 일괄 종료
+- 여러 컨테이너를 한 파일로 관리하는 흐름 이해
+
