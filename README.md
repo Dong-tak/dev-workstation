@@ -5,6 +5,7 @@
 
 - **제출 저장소**: https://github.com/Dong-tak/dev-workstation (Public)
 - **원본 로그 파일**: [`logs/`](logs/) — 본 문서의 모든 코드블록은 이 디렉토리의 실제 실행 로그에서 발췌했습니다.
+- **실습 캡처 이미지**: [`docs/screenshots/`](docs/screenshots/) — 명령어 입력과 출력이 함께 보이도록 캡처했습니다.
 
 ### 디렉토리 구조
 
@@ -18,6 +19,12 @@ dev-workstation/
 │   └── docker-compose.yml     # 보너스: 멀티 컨테이너 구성
 ├── docker-practice/
 │   └── Dockerfile             # 최초 실습(베이스 이미지만 지정)
+├── docs/screenshots/          # 실습 과정 캡처 이미지
+│   ├── 01-orbstack-port-forward.png
+│   ├── 02-docker-run-port-mapping.png
+│   ├── 03-nginx-default-page.png
+│   ├── 04-docker-logs-lifecycle.png
+│   └── 05-cleanup-and-images.png
 └── logs/                      # 명령어 + 출력이 함께 기록된 원본 로그
     ├── 01-terminal-basics.log
     ├── 02-permissions.log
@@ -90,7 +97,9 @@ dev-workstation/
 - [x] (보너스) Docker Compose 멀티 컨테이너 + 컨테이너 간 네트워크 통신 확인
 - [x] (보너스) Compose 운영 명령 (`up` / `down` / `ps` / `logs`)
 - [x] (보너스) 환경 변수 주입으로 포트/모드 변경
+- [x] 실습 과정 캡처 이미지 첨부 (5장 — 포트 매핑 / 로그 / 생명주기 / 정리)
 - [ ] (보너스) GitHub SSH 키 설정 — 미수행 (현재 HTTPS + osxkeychain 사용)
+- [ ] 브라우저 접속 화면 **주소창 포함** 재캡처 — **보완 예정** (§9 참고)
 - [ ] VSCode GitHub 로그인 화면 캡처 — **첨부 예정** (§12 참고)
 
 ---
@@ -308,6 +317,17 @@ $ docker logs my-web --tail 5
 로그에서 브라우저가 `/favicon.ico` 를 요청해 404가 난 흔적까지 확인할 수 있습니다.
 **컨테이너 안에서 무슨 일이 있었는지는 `docker logs` 로 바깥에서 관찰한다**는 점이 핵심입니다.
 
+### 실습 캡처 — 컨테이너 정리 후 목록/이미지 확인
+
+`docker stop` → `docker rm` → `docker ps -a`(빈 목록) → `docker images` 로
+**컨테이너는 지워졌지만 이미지는 남아있는 것**을 확인한 화면입니다.
+
+![컨테이너 정리 후 ps -a 와 images 확인](docs/screenshots/05-cleanup-and-images.png)
+
+- `docker ps -a` 결과가 비어 있음 → 컨테이너(실행 인스턴스)는 완전히 제거됨
+- `docker images` 에는 `nginx`(258MB), `hello-world`(18.5kB)가 그대로 존재 → **이미지(설계도)는 남음**
+- 이것이 **이미지와 컨테이너가 분리된 개념**이라는 직접적인 증거입니다.
+
 ---
 
 ## 7. 컨테이너 실행 실습
@@ -418,6 +438,21 @@ $ docker ps --filter name=ubuntu-keep
 | `docker run ... <명령>` | 지정한 명령을 메인 프로세스(PID 1)로 실행 | 명령이 끝나면 **컨테이너도 종료** (Exited 0) |
 | `docker attach` | **메인 프로세스의 입출력에 직접 연결** | Ctrl+C 로 나가면 메인 프로세스가 죽어 **컨테이너도 정지** |
 | `docker exec` | 실행 중인 컨테이너에 **별도 프로세스를 새로 띄움** | 빠져나와도 메인 프로세스는 살아있어 **계속 Up** |
+
+### 실습 캡처 — 로그 확인 후 stop → ps → ps -a → start
+
+`docker logs` 로 nginx 기동 로그와 접속 기록(`host: "localhost:8080"`)을 확인한 뒤,
+같은 컨테이너를 `stop` / `start` 하며 상태 변화를 관찰한 화면입니다.
+
+![docker logs 및 stop/start 생명주기](docs/screenshots/04-docker-logs-lifecycle.png)
+
+- `docker stop my-nginx` → `docker ps` 결과가 **비어 있음** (실행 중 목록에서 사라짐)
+- `docker ps -a` 에는 `Exited (0) 2 minutes ago` 로 **남아있음** → 정지 ≠ 삭제
+- `docker start my-nginx` → 다시 실행 상태로 복귀
+- 로그 안에 `"GET / HTTP/1.1" 200` 과 `/favicon.ico` 404 기록이 함께 남아,
+  **브라우저 접속이 실제로 컨테이너까지 도달했다**는 것도 같이 증명됩니다.
+
+**정리**
 
 - 컨테이너의 수명은 **메인 프로세스의 수명과 같다**는 것이 핵심입니다.
 - 그래서 계속 살려두려면 `sleep infinity` 나 `nginx -g 'daemon off;'` 처럼 **끝나지 않는 프로세스**가 필요하고,
@@ -548,14 +583,49 @@ HTTP 200 from port 8083
 
 두 컨테이너 모두 **내부적으로는 80번 포트**를 쓰지만, 호스트에서는 8082 / 8083 으로 각각 접근합니다.
 
-### 브라우저 접속 화면
+### 실습 캡처 1 — `-p 8080:80` 실행 명령과 출력
 
-이전 단계(nginx 기본 이미지, 8080 포트) 접속 화면:
+`docker run -d -p 8080:80 --name my-nginx nginx` 로 **이미지 자동 다운로드 → 컨테이너 실행 →
+포트 매핑 확인** 까지 이어진 화면입니다.
+
+![docker run -p 8080:80 실행 및 docker ps 확인](docs/screenshots/02-docker-run-port-mapping.png)
+
+- `Unable to find image 'nginx:latest' locally` → 로컬에 없으면 **자동으로 pull** 한다는 것을 확인
+- `docker ps` 의 PORTS 컬럼: `0.0.0.0:8080->80/tcp, [::]:8080->80/tcp`
+  → **호스트 8080 → 컨테이너 80** 매핑이 실제로 걸린 증거
+
+### 실습 캡처 2 — OrbStack GUI 에서 본 포트 포워딩
+
+같은 매핑을 CLI가 아닌 OrbStack GUI 에서 교차 확인한 화면입니다.
+
+![OrbStack 컨테이너 상세 - Port Forwards 8080→80](docs/screenshots/01-orbstack-port-forward.png)
+
+| 항목 | 값 |
+|---|---|
+| Name / Image | `my-nginx` / `nginx` |
+| Status | Up |
+| Port Forwards | **Host Port 8080 → Container Port 80 (TCP)** |
+| 컨테이너 IP | `192.168.215.2` (호스트와 분리된 네트워크) |
+
+**포트 매핑이 필요한 이유가 이 화면에 그대로 나타납니다.** 컨테이너는 `192.168.215.2` 라는
+자체 IP를 가진 별도 네트워크에 있고, 호스트의 8080을 컨테이너의 80으로 연결해줘야 브라우저가 도달합니다.
+
+### 실습 캡처 3 — 브라우저 접속 성공 (nginx 기본 페이지)
+
+`http://localhost:8080` 접속 결과입니다.
+
+![localhost:8080 nginx 기본 페이지](docs/screenshots/03-nginx-default-page.png)
+
+이전 단계에서 캡처한 브라우저 접속 화면:
 
 <img width="753" alt="localhost:8080 브라우저 접속" src="https://github.com/user-attachments/assets/20d31cdf-8900-4b4d-87d9-e713a9547fd9" />
 
-> **첨부 예정**: 커스텀 이미지 `my-web:1.0` 의 `http://localhost:8082` 및 `http://localhost:8083`
-> 브라우저 접속 화면 2장 — **주소창(포트 포함)과 응답 화면이 함께 보이도록** 캡처하여 이 위치에 첨부합니다.
+> **보완 예정**: 위 캡처들은 주소창이 함께 잡히지 않았습니다.
+> 커스텀 이미지 `my-web:1.0` 의 `http://localhost:8082` / `http://localhost:8083` 접속 화면을
+> **주소창(포트 포함)이 보이도록** 다시 캡처해 이 위치에 첨부할 예정입니다.
+> 다만 접속 자체는 위 `curl` 출력(HTTP 200), OrbStack 의 Port Forwards 표,
+> 그리고 [§7-3 의 nginx 로그](#실습-캡처--로그-확인-후-stop--ps--ps--a--start)에 남은
+> `host: "localhost:8080"` 기록으로 교차 증명됩니다.
 
 ---
 
@@ -1023,6 +1093,11 @@ Git은 인터넷 없이도 동작하고, GitHub는 그 결과를 **다른 사람
 | Compose 운영 | `up -d` `ps` `logs` `down` | 실행/상태/로그/종료 전체 사이클 | [§13-2](#13-2-운영-명령-up--ps--logs--down) / [로그](logs/09-compose.log) |
 | 컨테이너 간 통신 | `docker compose exec web wget -qO- http://api/` | 서비스명 DNS로 통신 성공, api는 호스트 미노출 | [§13-3](#13-3-컨테이너-간-네트워크-통신-서비스-디스커버리) |
 | 환경변수 주입 | `WEB_PORT=8085 APP_ENV=prod docker compose up -d` | 파일 수정 없이 포트·모드 변경 | [§13-4](#13-4-환경-변수로-포트모드-변경-설정과-코드의-분리) |
+| 포트 매핑 (캡처) | `docker run -d -p 8080:80 --name my-nginx nginx` + `docker ps` | 이미지 자동 pull, PORTS `0.0.0.0:8080->80/tcp` | [캡처](docs/screenshots/02-docker-run-port-mapping.png) |
+| 포트 포워딩 (GUI 교차확인) | OrbStack → Containers → Info | Host 8080 → Container 80, 컨테이너 IP `192.168.215.2` | [캡처](docs/screenshots/01-orbstack-port-forward.png) |
+| 브라우저 접속 (캡처) | `http://localhost:8080` 접속 | nginx 기본 페이지 정상 응답 | [캡처](docs/screenshots/03-nginx-default-page.png) |
+| 생명주기 (캡처) | `docker logs` → `stop` → `ps` → `ps -a` → `start` | 정지 후 `ps` 는 비고 `ps -a` 는 `Exited (0)` 로 남음 | [캡처](docs/screenshots/04-docker-logs-lifecycle.png) |
+| 이미지/컨테이너 분리 (캡처) | `docker rm` → `docker ps -a` → `docker images` | 컨테이너는 삭제됐지만 이미지는 그대로 남음 | [캡처](docs/screenshots/05-cleanup-and-images.png) |
 
 ---
 
@@ -1069,6 +1144,8 @@ docker compose down
 ## 18. 보안 및 개인정보 보호
 
 - 이 문서·로그·스크린샷에는 **토큰, 비밀번호, 개인키, 인증 코드를 포함하지 않았습니다.**
+- [`docs/screenshots/`](docs/screenshots/) 의 캡처 5장은 첨부 전 전수 확인했으며,
+  터미널 프롬프트·컨테이너 정보·nginx 로그만 포함되어 있고 인증 정보는 노출되지 않았습니다.
 - `user.email` 은 GitHub `noreply` 주소를 사용하며, 문서에는 `59****@users.noreply.github.com` 으로 마스킹했습니다.
 - GitHub 인증은 HTTPS + `osxkeychain` 방식으로, **토큰은 macOS 키체인에만 저장**되고 저장소·로그에는 남지 않습니다.
 - [`.gitignore`](.gitignore) 로 다음을 추적에서 제외했습니다.
@@ -1087,6 +1164,7 @@ $ git config --global user.email | sed -E 's/^(..).*@/\1****@/'
 
 ## 19. 남은 작업
 
-- [ ] `http://localhost:8082` / `8083` 브라우저 접속 화면 캡처 첨부 (주소창 포함) → §9
+- [x] 실습 과정 캡처 이미지 5장 첨부 → [`docs/screenshots/`](docs/screenshots/) (§6-2, §7-3, §9)
+- [ ] `http://localhost:8082` / `8083` 브라우저 접속 화면을 **주소창이 함께 보이도록** 재캡처 → §9
 - [ ] VSCode GitHub 로그인 + Source Control 연동 화면 캡처 첨부 → §12
 - [ ] (선택) GitHub SSH 키 등록 후 `ssh -T git@github.com` 결과 기록
