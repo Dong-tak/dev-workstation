@@ -95,13 +95,13 @@ dev-workstation/
 - [x] Git 사용자 정보 · 기본 브랜치 설정 + `git config --list` 기록
 - [x] GitHub 원격 저장소 연동 및 push
 - [x] 민감정보 마스킹 처리
+- [x] 실습 과정 캡처 이미지 첨부 (7장 — 포트 매핑 / 로그 / 생명주기 / 정리 / 브라우저 접속 2장)
+- [x] VSCode GitHub 로그인 화면 캡처
 - [x] (보너스) Docker Compose 단일 서비스
 - [x] (보너스) Docker Compose 멀티 컨테이너 + 컨테이너 간 네트워크 통신 확인
 - [x] (보너스) Compose 운영 명령 (`up` / `down` / `ps` / `logs`)
 - [x] (보너스) 환경 변수 주입으로 포트/모드 변경
-- [x] 실습 과정 캡처 이미지 첨부 (7장 — 포트 매핑 / 로그 / 생명주기 / 정리 / 브라우저 접속 2장)
 - [ ] (보너스) GitHub SSH 키 설정 — 미수행 (현재 HTTPS + osxkeychain 사용)
-- [ ] VSCode GitHub 로그인 화면 캡처 — **첨부 예정** (§12 참고)
 
 ---
 
