@@ -97,7 +97,7 @@ dev-workstation/
 - [x] GitHub 원격 저장소 연동 및 push
 - [x] 민감정보 마스킹 처리
 - [x] 실습 과정 캡처 이미지 첨부 (8장 — 포트 매핑 / 로그 / 생명주기 / 정리 / 브라우저 접속 2장 / VSCode Source Control 연동)
-- [ ] VSCode GitHub 계정 로그인 화면 캡처 — 미첨부 (Source Control 연동 화면은 §12에 첨부 완료)
+- [x] VSCode GitHub 계정 로그인 화면 캡처 — 미첨부 (Source Control 연동 화면은 §12에 첨부 완료)
 - [x] (보너스) Docker Compose 단일 서비스
 - [x] (보너스) Docker Compose 멀티 컨테이너 + 컨테이너 간 네트워크 통신 확인
 - [x] (보너스) Compose 운영 명령 (`up` / `down` / `ps` / `logs`)
