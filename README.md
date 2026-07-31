@@ -26,7 +26,8 @@ dev-workstation/
 │   ├── 04-docker-logs-lifecycle.png
 │   ├── 05-cleanup-and-images.png
 │   ├── 06-browser-8082-with-urlbar.png
-│   └── 07-browser-8083-with-urlbar.png
+│   ├── 07-browser-8083-with-urlbar.png
+│   └── 09-vscode-source-control-sync.png
 └── logs/                      # 명령어 + 출력이 함께 기록된 원본 로그
     ├── 01-terminal-basics.log
     ├── 02-permissions.log
@@ -95,8 +96,8 @@ dev-workstation/
 - [x] Git 사용자 정보 · 기본 브랜치 설정 + `git config --list` 기록
 - [x] GitHub 원격 저장소 연동 및 push
 - [x] 민감정보 마스킹 처리
-- [x] 실습 과정 캡처 이미지 첨부 (7장 — 포트 매핑 / 로그 / 생명주기 / 정리 / 브라우저 접속 2장)
-- [x] VSCode GitHub 로그인 화면 캡처
+- [x] 실습 과정 캡처 이미지 첨부 (8장 — 포트 매핑 / 로그 / 생명주기 / 정리 / 브라우저 접속 2장 / VSCode Source Control 연동)
+- [ ] VSCode GitHub 계정 로그인 화면 캡처 — 미첨부 (Source Control 연동 화면은 §12에 첨부 완료)
 - [x] (보너스) Docker Compose 단일 서비스
 - [x] (보너스) Docker Compose 멀티 컨테이너 + 컨테이너 간 네트워크 통신 확인
 - [x] (보너스) Compose 운영 명령 (`up` / `down` / `ps` / `logs`)
@@ -816,8 +817,19 @@ d3163ab Add .gitignore file
 - 인증 방식: HTTPS + `osxkeychain` (토큰은 macOS 키체인에 저장되며 저장소에 남지 않음)
 - `user.email` 은 GitHub `noreply` 주소를 사용하고, 본 문서에는 앞 2자리만 남기고 마스킹했습니다.
 
-> **첨부 예정**: VSCode 좌하단 Accounts 에 GitHub 계정이 로그인된 화면 + Source Control 패널에
-> 이 저장소/브랜치가 연동된 화면 2장. **토큰·비밀번호가 보이지 않는 상태로** 캡처합니다.
+### 실습 캡처 — VSCode Source Control 연동 화면
+
+VSCode 소스 제어 패널의 커밋 그래프입니다. `main` 브랜치 옆 구름 아이콘과, 화살표 숫자가 없는
+상태(ahead/behind 없음)로 **로컬과 GitHub 원격이 완전히 동기화**되어 있음을 보여줍니다.
+
+![VSCode Source Control 연동 및 커밋 그래프](docs/screenshots/09-vscode-source-control-sync.png)
+
+- `main` 라벨 옆 구름 아이콘: 이 브랜치가 원격 저장소(`origin`)와 연결되어 있다는 표시
+- 커밋 그래프가 하나의 실선으로 이어짐: 로컬 히스토리와 원격 히스토리가 갈라지지 않고 일치
+- 최상단 커밋(`docs: 브라우저 접속 캡처 2장 추가...`)이 실제로 GitHub의 `origin/main` 최신 커밋과 동일
+
+> **첨부 예정**: VSCode 좌하단 Accounts 에 GitHub 계정이 로그인된 화면 1장.
+> **토큰·비밀번호가 보이지 않는 상태로** 캡처합니다.
 
 ---
 
@@ -1106,6 +1118,7 @@ Git은 인터넷 없이도 동작하고, GitHub는 그 결과를 **다른 사람
 | 볼륨 대조 실험 | 볼륨 없이 `ls /data` | 볼륨 미연결 시 경로 자체가 없음 → 데이터는 볼륨에 있음 | [§11](#대조-실험--볼륨을-붙이지-않으면-그-경로-자체가-없다) |
 | Git 설정 | `git config --list` `git config --global init.defaultBranch` | user.name/email, 기본 브랜치 main | [§12](#12-git-설정-및-github-연동) / [로그](logs/08-git-config.log) |
 | GitHub 연동 | `git remote -v` `git log --oneline` | origin 연결 및 커밋 이력 | [§12](#12-git-설정-및-github-연동) |
+| VSCode 연동 (캡처) | VSCode Source Control 패널 확인 | `main` 브랜치가 원격과 ahead/behind 없이 완전 동기화 | [캡처](docs/screenshots/09-vscode-source-control-sync.png) |
 | Compose 운영 | `up -d` `ps` `logs` `down` | 실행/상태/로그/종료 전체 사이클 | [§13-2](#13-2-운영-명령-up--ps--logs--down) / [로그](logs/09-compose.log) |
 | 컨테이너 간 통신 | `docker compose exec web wget -qO- http://api/` | 서비스명 DNS로 통신 성공, api는 호스트 미노출 | [§13-3](#13-3-컨테이너-간-네트워크-통신-서비스-디스커버리) |
 | 환경변수 주입 | `WEB_PORT=8085 APP_ENV=prod docker compose up -d` | 파일 수정 없이 포트·모드 변경 | [§13-4](#13-4-환경-변수로-포트모드-변경-설정과-코드의-분리) |
